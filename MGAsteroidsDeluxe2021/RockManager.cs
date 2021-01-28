@@ -124,6 +124,26 @@ namespace MGAsteroidsDeluxe2021
             largeRockAmount = 2;
             NewWaveSpawn();
         }
+
+        public void Hide()
+        {
+            foreach (Rock rock in Rocks)
+            {
+                rock.Visible = false;
+                rock.explodeFX = false;
+                rock.HideExplode();
+            }
+        }
+
+        public void UnHide()
+        {
+            foreach (Rock rock in Rocks)
+            {
+                rock.Visible = true;
+                rock.explodeFX = true;
+            }
+
+        }
         #endregion
         #region Private Methods
         void SpawnRocks(Vector3 position, GameLogic.RockSize rockSize, int count)
@@ -177,8 +197,14 @@ namespace MGAsteroidsDeluxe2021
             Vector3 position, float speed, GameLogic.RockSize size)
         {
             rocksList[rock].Scale = scale;
-            rocksList[rock].size = size;
             rocksList[rock].Spawn(position, Core.VelocityFromAngleZ(speed));
+            rocksList[rock].size = size;
+            rocksList[rock].PO.RotationVelocity.Z = Core.RandomMinMax(-0.666f, 0.666f);
+
+            if (!rocksList[rock].explodeFX)
+            {
+                rocksList[rock].Visible = false;
+            }
         }
 
         void NewWaveSpawn()

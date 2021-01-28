@@ -86,6 +86,14 @@ namespace MGAsteroidsDeluxe2021.Entities
                 dotsList[dot].Spawn(Position, velocity, Core.RandomMinMax(minlife, maxlife));
             }
         }
+
+        public void Hide()
+        {
+            foreach(Dot dot in dotsList)
+            {
+                dot.Visible = false;
+            }
+        }
         #endregion
         #region Private Methods
         #endregion

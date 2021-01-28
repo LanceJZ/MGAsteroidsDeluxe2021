@@ -9,23 +9,21 @@ using System.Linq;
 
 namespace MGAsteroidsDeluxe2021.Entities
 {
-    class WedgePair : Entity
+    class WedgeGroup : Entity
     {
         #region Fields
-        Wedge[] wedges = new Wedge[2];
-        int score = 100;
-        bool alone = true;
+        WedgePair[] wedgePairs = new WedgePair[3];
+        int score = 50;
         #endregion
         #region Properties
-        public bool Alone { set => alone = value; }
-        public Wedge[] TheWedges { get => wedges; }
+        public WedgePair[] TheWedgePairs { get => wedgePairs; }
         #endregion
         #region Constructor
-        public WedgePair(Game game, Camera camera) : base(game, camera)
+        public WedgeGroup(Game game, Camera camera) : base(game, camera)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                wedges[i] = new Wedge(game, camera);
+                wedgePairs[i] = new WedgePair(game, camera);
             }
         }
         #endregion
@@ -34,30 +32,35 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Initialize();
 
-            foreach (Wedge wedge in wedges)
+            foreach(WedgePair wedgePair in wedgePairs)
             {
-                wedge.Alone = false;
-                wedge.PO.AddAsChildOf(PO, true, false, true, false);
+                wedgePair.PO.AddAsChildOf(PO);
+                wedgePair.Alone = false;
             }
 
-            wedges[1].PO.Rotation.Z = (float)Math.PI;
-            wedges[1].PO.X = -0.65f;
-            wedges[0].PO.X = 0.65f;
+            float wY = 0.56f;
+            float wX = 0.65f;
+            float rot = 0.333f;
+            wedgePairs[0].PO.Position.Y = wY;
+            wedgePairs[1].PO.Position = new Vector3(wX, -wY, 0);
+            wedgePairs[2].PO.Position = new Vector3(-wX, -wY, 0);
+            wedgePairs[1].PO.Rotation.Z = (float)Math.PI * rot;
+            wedgePairs[2].PO.Rotation.Z = (float)-Math.PI * rot;
         }
 
         public new void LoadContent()
         {
             base.LoadContent();
 
-            foreach (Wedge wedge in wedges)
+            foreach(WedgePair wedgePair in wedgePairs)
             {
-                wedge.LoadContent();
+                wedgePair.LoadContent();
             }
         }
 
         public void BeginRun()
         {
-
+            Velocity = Core.RandomVelocity(3);
         }
         #endregion
         #region Update
@@ -65,11 +68,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Update(gameTime);
 
-            if (alone)
-            {
-                PO.RotationVelocity.Z = wedges[0].RotateToChase(Position, Rotation.Z);
-                Velocity = wedges[0].VelocityToChase(Rotation.Z);
-            }
+            Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight), Core.ScreenWidth);
         }
         #endregion
         #region Public Methods
@@ -77,9 +76,9 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             bool hit = false;
 
-            foreach (Wedge wedge in wedges)
+            foreach (WedgePair wedgePair in wedgePairs)
             {
-                if (wedge.CheckCollision(entity))
+                if (wedgePair.CheckCollision(entity))
                 {
                     hit = true;
                 }
@@ -90,17 +89,17 @@ namespace MGAsteroidsDeluxe2021.Entities
 
         public void Enable(bool enable)
         {
-            foreach (Wedge wedge in wedges)
+            foreach (WedgePair wedgePair in wedgePairs)
             {
-                wedge.Enabled = enable;
+                wedgePair.Enable(enable);
             }
         }
 
         public void MakeVisable(bool visable)
         {
-            foreach(Wedge wedge in wedges)
+            foreach(WedgePair wedgePair in wedgePairs)
             {
-                wedge.Visible = visable;
+                wedgePair.MakeVisable(visable);
             }
         }
         #endregion

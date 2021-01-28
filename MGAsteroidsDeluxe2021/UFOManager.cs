@@ -71,11 +71,27 @@ namespace MGAsteroidsDeluxe2021
             spawnTimer.Reset(Core.RandomMinMax(10 - Main.instance.Wave * 0.1f,
                 10.15f + Main.instance.Wave * 0.1f));
         }
+        
         public void Reset()
         {
             theUFO.Enabled = false;
             spawnCount = 0;
             ResetTimer();
+        }
+
+        public void Hide()
+        {
+            TheUFO.Visible = false;
+            TheUFO.Shot.Visible = false;
+            TheUFO.explodeFX = false;
+            TheUFO.HideExplode();
+        }
+
+        public void UnHide()
+        {
+            TheUFO.Visible = true;
+            TheUFO.Shot.Visible = true;
+            TheUFO.explodeFX = true;
         }
         #endregion
         #region Private Methods

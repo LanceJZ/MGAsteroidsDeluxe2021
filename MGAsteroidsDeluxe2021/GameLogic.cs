@@ -118,7 +118,8 @@ namespace MGAsteroidsDeluxe2021
         public override void Initialize()
         {
             base.Initialize();
-            Game.Window.Title = "Asteroids 2020 Version 1.01"; // Has to be in Initialize.
+
+            Game.Window.Title = "Asteroids Deluxe 2021 Version 0.5"; // Has to be in Initialize.
 
             highScoreInstructions[0] = "Your score is one of the ten best";
             highScoreInstructions[1] = "Please enter your initials";
@@ -190,7 +191,7 @@ namespace MGAsteroidsDeluxe2021
                 {
                     _gameMode = GameState.InPlay;
                     ThePlayer.Spawn(Vector3.Zero);
-                    TheUFO.TheUFO.Reset(); //WTF?
+                    TheUFO.TheUFO.Reset(); //WTAF?
                 }
             }
 
@@ -209,28 +210,16 @@ namespace MGAsteroidsDeluxe2021
 
                 if (displayHighScoreList || _gameMode == GameState.HighScore)
                 {
-                    foreach (Rock rock in rockManager.Rocks)
-                    {
-                        rock.Visible = false;
-                        rock.explodeFX = false;
-                    }
-
-                    ufoManager.TheUFO.Visible = false;
-                    ufoManager.TheUFO.Shot.Visible = false;
-                    ufoManager.TheUFO.explodeFX = false;
+                    rockManager.Hide();
                     ufoManager.TheUFO.ResetFireTimer();
+                    ufoManager.Hide();
+                    wedgeManager.MakeVisable(false);
                 }
                 else
                 {
-                    foreach (Rock rock in rockManager.Rocks)
-                    {
-                        rock.Visible = true;
-                        rock.explodeFX = true;
-                    }
-
-                    ufoManager.TheUFO.Visible = true;
-                    ufoManager.TheUFO.Shot.Visible = true;
-                    ufoManager.TheUFO.explodeFX = true;
+                    rockManager.UnHide();
+                    ufoManager.UnHide();
+                    wedgeManager.MakeVisable(true);
                 }
             }
         }

@@ -177,13 +177,6 @@ namespace Panther
         {
             _keyStateOld = Keyboard.GetState();
         }
-
-
-        public static Vector3 RandomVelocity(float speed, float radianDirection)
-        {
-            float amt = Core.RandomMinMax(speed * 0.15f, speed);
-            return VelocityFromAngleZ(radianDirection, amt);
-        }
         /// <summary>
         /// Returns a velocity with Z as the ground plane. Y as up.
         /// X as the Y, Y as the Z.
@@ -536,14 +529,27 @@ namespace Panther
         {
             return RandomMinMax(0, MathHelper.TwoPi);
         }
-
+        /// <summary>
+        /// Returns a random velocity with a random direction with speed as max.
+        /// </summary>
+        /// <param name="speed"></param>
+        /// <returns></returns>
         public static Vector3 RandomVelocity(float speed)
         {
-            float ang = RandomRadian();
-            float amt = RandomMinMax(speed * 0.15f, speed);
-            return VelocityFromAngleZ(ang, amt);
+            float rad = RandomRadian();
+            return RandomVelocity(speed, rad);
         }
-
+        /// <summary>
+        /// Returns a velocity at a random amount with speed as max.
+        /// </summary>
+        /// <param name="speed"></param>
+        /// <param name="radianDirection"></param>
+        /// <returns>Vector3</returns>
+        public static Vector3 RandomVelocity(float speed, float radianDirection)
+        {
+            float amt = Core.RandomMinMax(speed * 0.15f, speed);
+            return VelocityFromAngleZ(radianDirection, amt);
+        }
         public static void DebugConsole(string text)
         {
             Debug.WriteLine(text);

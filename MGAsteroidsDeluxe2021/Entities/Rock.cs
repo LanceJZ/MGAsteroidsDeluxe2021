@@ -13,7 +13,6 @@ namespace MGAsteroidsDeluxe2021.Entities
     {
         #region Fields
         Explode explosion;
-        Camera cameraRef;
         public GameLogic.RockSize size = new GameLogic.RockSize();
         public float baseRadius;
         public bool explodeFX = true;
@@ -25,7 +24,6 @@ namespace MGAsteroidsDeluxe2021.Entities
         #region Constructor
         public Rock(Game game, Camera camera) : base(game, camera)
         {
-            cameraRef = camera;
             explosion = new Explode(game, camera);
         }
         #endregion
@@ -33,6 +31,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         public override void Initialize()
         {
             base.Initialize();
+
         }
 
         public new void LoadContent()
@@ -48,6 +47,8 @@ namespace MGAsteroidsDeluxe2021.Entities
             explosion.Speed = 4.666f;
             explosion.Maxlife = 0.8f;
             explosion.Minlife = 0.25f;
+
+            PO.RotationVelocity.Z = Core.RandomMinMax(-3.33f, 3.33f);
         }
         #endregion
         #region Update
@@ -63,6 +64,10 @@ namespace MGAsteroidsDeluxe2021.Entities
         }
         #endregion
         #region Public Methods
+        public void HideExplode()
+        {
+            explosion.Hide();
+        }
         #endregion
         #region Private Methods
         void CheckCollusion()
@@ -133,6 +138,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         void Explode()
         {
             Enabled = false;
+            Moveable = false;
             Main.instance.TheRocks.RockDistroyed(this);
 
             if (explodeFX)

@@ -13,10 +13,10 @@ namespace MGAsteroidsDeluxe2021
     public class WedgeManager : GameComponent
     {
         #region Fields
-        Camera cameraRef;
         Timer spawnTimer;
-        Wedge wedge;
-        WedgePair wedgePair;
+        Wedge[] wedges = new Wedge[6];
+        WedgePair[] wedgePairs = new WedgePair[3];
+        WedgeGroup wedgeGroup;
         #endregion
         #region Properties
 
@@ -24,10 +24,20 @@ namespace MGAsteroidsDeluxe2021
         #region Constructor
         public WedgeManager(Game game, Camera camera) : base(game)
         {
-            cameraRef = camera;
             spawnTimer = new Timer(game);
-            wedge = new Wedge(game, camera);
-            wedgePair = new WedgePair(game, camera);
+
+            for (int i = 0; i < 6; i++)
+            {
+                wedges[i] = new Wedge(game, camera);
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                wedgePairs[i] = new WedgePair(game, camera);
+            }
+
+            wedgeGroup = new WedgeGroup(game, camera);
+
             game.Components.Add(this);
         }
         #endregion
@@ -41,16 +51,23 @@ namespace MGAsteroidsDeluxe2021
 
         public void LoadContent()
         {
-            wedge.LoadContent();
-            wedgePair.LoadContent();
+            foreach(Wedge wedge in wedges)
+            {
+                wedge.LoadContent();
+            }
+
+            foreach(WedgePair wedgePair in wedgePairs)
+            {
+                wedgePair.LoadContent();
+            }
+
+            wedgeGroup.LoadContent();
         }
 
         public void BeginRun()
         {
-            wedge.X = -30;
-            wedge.Y = -30;
-            wedgePair.X = 30;
-            wedgePair.Y = 30;
+
+            wedgeGroup.BeginRun();
         }
         #endregion
         #region Update
@@ -61,8 +78,35 @@ namespace MGAsteroidsDeluxe2021
         }
         #endregion
         #region Public Methods
+        public void MakeVisable(bool visable)
+        {
+            foreach (Wedge wedge in wedges)
+            {
+                wedge.Visible = false;
+            }
+
+            foreach (WedgePair wedgePair in wedgePairs)
+            { 
+                wedgePair.MakeVisable(visable);
+            }
+
+            wedgeGroup.MakeVisable(visable);
+        }
         #endregion
         #region Private Methods
+        void CheckGroupCollision()
+        {
+            foreach (Shot shot in Main.instance.ThePlayer.Shots)
+            {
+                if(wedgeGroup.CheckCollision(shot))
+                {
+                    for(int i = 0; i < 3; i ++)
+                    {
+
+                    }
+                }
+            }
+        }
         #endregion
     }
 }

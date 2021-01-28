@@ -12,7 +12,6 @@ namespace MGAsteroidsDeluxe2021.Entities
     public class Wedge : VectorModel
     {
         #region Fields
-        Camera cameraRef;
         int score = 200;
         float rotateMagnitude = MathHelper.PiOver2;
         Color color = new Color(175, 175, 255);
@@ -24,7 +23,6 @@ namespace MGAsteroidsDeluxe2021.Entities
         #region Constructor
         public Wedge(Game game, Camera camera) : base(game, camera)
         {
-            cameraRef = camera;
 
         }
         #endregion
@@ -33,6 +31,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Initialize();
 
+            Enabled = false;
         }
 
         public new void LoadContent()
@@ -60,6 +59,11 @@ namespace MGAsteroidsDeluxe2021.Entities
         }
         #endregion
         #region Public Methods
+        public bool CheckCollision(Entity entity)
+        {
+            return CirclesIntersect(entity);
+        }
+
         public float RotateToChase(Vector3 origin, float rotation)
         {
             return Core.AimAtTargetZ(origin, Main.instance.ThePlayer.Position,

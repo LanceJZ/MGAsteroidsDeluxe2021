@@ -12,7 +12,6 @@ namespace MGAsteroidsDeluxe2021.Entities
     public class Dot : VectorModel
     {
         #region Fields
-        Camera cameraRef;
         Timer lifeTimer;
         #endregion
         #region Properties
@@ -21,7 +20,6 @@ namespace MGAsteroidsDeluxe2021.Entities
         #region Constructor
         public Dot(Game game, Camera camera) : base(game, camera)
         {
-            cameraRef = camera;
             lifeTimer = new Timer(game);
         }
         #endregion
@@ -51,6 +49,7 @@ namespace MGAsteroidsDeluxe2021.Entities
             if (lifeTimer.Elapsed)
             {
                 Enabled = false;
+                Moveable = false;
             }
         }
         #endregion

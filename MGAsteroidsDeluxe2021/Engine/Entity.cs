@@ -128,7 +128,7 @@ namespace Panther
         #endregion
         #region Spawn
         /// <summary>
-        /// If position, rotation, rotation velocity and velocity are used.
+        /// If position, velocity, rotation, and rotation velocity are used.
         /// </summary>
         /// <param name="position">Position to spawn at.</param>
         /// <param name="rotation">Rotation to spawn at.</param>
@@ -142,12 +142,13 @@ namespace Panther
             _PO.Rotation = rotation;
             _PO.RotationVelocity = rotationVelocity;
             Enabled = true;
+            Moveable = true;
             Visible = true;
             _PO.Hit = false;
             _PO.NewSpawn = true;
         }
         /// <summary>
-        /// If position, rotation and velocity are used.
+        /// If position, rotation and velocity are used. Rotation velocity is zero.
         /// </summary>
         /// <param name="position">Position to spawn at.</param>
         /// <param name="rotation">Rotation to spawn at.</param>
@@ -157,7 +158,7 @@ namespace Panther
             Spawn(position, velocity, rotation, Vector3.Zero);
         }
         /// <summary>
-        /// If only position and rotation are used.
+        /// If only position and rotation are used. Rotation and rotation velocity are zero.
         /// </summary>
         /// <param name="position">Position to spawn at.</param>
         /// <param name="rotation">Rotation to spawn at.</param>
@@ -166,7 +167,7 @@ namespace Panther
             Spawn(position, velocity, Vector3.Zero);
         }
         /// <summary>
-        /// If only position is used.
+        /// If only position is used. Velocity, rotation and rotation velocity are zero.
         /// </summary>
         /// <param name="position">Position to spawn at.</param>
         public virtual void Spawn(Vector3 position)

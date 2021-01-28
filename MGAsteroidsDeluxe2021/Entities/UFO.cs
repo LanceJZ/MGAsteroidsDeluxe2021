@@ -14,7 +14,6 @@ namespace MGAsteroidsDeluxe2021.Entities
         #region Fields
         Shot shot;
         Explode explosion;
-        Camera cameraRef;
         Color color = new Color(175, 175, 255);
         Timer fireTimer;
         Timer vectorTimer;
@@ -35,7 +34,6 @@ namespace MGAsteroidsDeluxe2021.Entities
         public UFO(Game game, Camera camera) : base(game, camera)
         {
             shot = new Shot(game, camera);
-            cameraRef = camera;
             fireTimer = new Timer(game);
             vectorTimer = new Timer(game);
             explosion = new Explode(game, camera);
@@ -175,6 +173,11 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             Main.instance.TheUFO.ResetTimer();
             Enabled = false;
+        }
+
+        public void HideExplode()
+        {
+            explosion.Hide();
         }
         #endregion
         #region Private Methods
