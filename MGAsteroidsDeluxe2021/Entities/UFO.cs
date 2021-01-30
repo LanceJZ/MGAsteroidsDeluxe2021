@@ -171,7 +171,7 @@ namespace MGAsteroidsDeluxe2021.Entities
 
         public void Reset()
         {
-            Main.instance.TheUFO.ResetTimer();
+            Main.instance.TheUFOManager.ResetTimer();
             Enabled = false;
         }
 
@@ -189,6 +189,7 @@ namespace MGAsteroidsDeluxe2021.Entities
             {
                 if (PO.CirclesIntersect(shot.PO))
                 {
+                    shot.Enabled = false;
                     Explode();
                     PlayerScored();
                 }
@@ -198,12 +199,6 @@ namespace MGAsteroidsDeluxe2021.Entities
             {
                 Explode();
                 PlayerScored();
-                Main.instance.PlayerHit();
-            }
-
-            if (shot.PO.CirclesIntersect(player.PO))
-            {
-                shot.Enabled = false;
                 Main.instance.PlayerHit();
             }
         }
@@ -247,7 +242,7 @@ namespace MGAsteroidsDeluxe2021.Entities
             switch (type)
             {
                 case GameLogic.UFOType.Large:
-                    angle = Core.RandomRadian();
+                    angle = RandomFire();
                     break;
                 case GameLogic.UFOType.Small:
                     angle = AimedFire();
@@ -277,6 +272,29 @@ namespace MGAsteroidsDeluxe2021.Entities
 
             return PO.AngleFromVectorsZ(Main.instance.ThePlayer.Position) +
                 Core.RandomMinMax(-percentChance, percentChance);
+        }
+
+        float RandomFire()
+        {
+            float angle = 0;
+
+            if (Core.RandomMinMax(1, 4) > 1)
+            {
+                angle = Core.RandomRadian();
+            }
+            else
+            {
+                if (Core.RandomMinMax(1, 4) > 2 && Main.instance.TheWedgeManager.TheWedgeGroup.Enabled)
+                {
+                    angle = PO.AngleFromVectorsZ(Main.instance.TheWedgeManager.TheWedgeGroup.Position);
+                }
+                else
+                {
+                    angle = AimedFire();
+                }
+            }
+
+            return angle;
         }
 
         void PlayerScored()

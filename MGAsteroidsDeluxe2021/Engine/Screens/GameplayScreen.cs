@@ -118,16 +118,13 @@ namespace Panther
                     200);
 
                 enemyPosition = Vector2.Lerp(enemyPosition, targetPosition, 0.05f);
-
-                // TODO: this game isn't very fun! You could probably improve
-                // it by inserting something more interesting in this space :-)
             }
         }
 
 
         /// <summary>
         /// Lets the game respond to player input. Unlike the Update method,
-        /// this will only be called when the gameplay screen is active.
+        /// this will only be called when the game play screen is active.
         /// </summary>
         public override void HandleInput(InputState input)
         {

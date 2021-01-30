@@ -73,9 +73,9 @@ namespace MGAsteroidsDeluxe2021
 
         public GameState CurrentMode { get => _gameMode; set => _gameMode = value; }
         public Player ThePlayer { get => player; }
-        public RockManager TheRocks { get => rockManager; }
-        public UFOManager TheUFO { get => ufoManager; }
-        public WedgeManager TheWedges { get => wedgeManager; }
+        public RockManager TheRockManager { get => rockManager; }
+        public UFOManager TheUFOManager { get => ufoManager; }
+        public WedgeManager TheWedgeManager { get => wedgeManager; }
         public uint Score { get => score; }
         public uint Wave { get => wave; set => wave = value; }
         public int Lives { get => lives; }
@@ -119,7 +119,7 @@ namespace MGAsteroidsDeluxe2021
         {
             base.Initialize();
 
-            Game.Window.Title = "Asteroids Deluxe 2021 Version 0.5"; // Has to be in Initialize.
+            Game.Window.Title = "Asteroids Deluxe 2021 Version 1.0"; // Has to be in Initialize.
 
             highScoreInstructions[0] = "Your score is one of the ten best";
             highScoreInstructions[1] = "Please enter your initials";
@@ -191,7 +191,7 @@ namespace MGAsteroidsDeluxe2021
                 {
                     _gameMode = GameState.InPlay;
                     ThePlayer.Spawn(Vector3.Zero);
-                    TheUFO.TheUFO.Reset(); //WTAF?
+                    TheUFOManager.TheUFO.Reset(); //WTAF?
                 }
             }
 
@@ -210,15 +210,15 @@ namespace MGAsteroidsDeluxe2021
 
                 if (displayHighScoreList || _gameMode == GameState.HighScore)
                 {
-                    rockManager.Hide();
+                    rockManager.Hide(); //TODO: Make like wedgeManager
                     ufoManager.TheUFO.ResetFireTimer();
-                    ufoManager.Hide();
+                    ufoManager.Hide(); //TODO: Make like wedgeManager
                     wedgeManager.MakeVisable(false);
                 }
                 else
                 {
-                    rockManager.UnHide();
-                    ufoManager.UnHide();
+                    rockManager.UnHide(); //TODO: Make like wedgeManager
+                    ufoManager.UnHide(); //TODO: Make like wedgeManager
                     wedgeManager.MakeVisable(true);
                 }
             }
@@ -472,14 +472,14 @@ namespace MGAsteroidsDeluxe2021
             PositionedObject clearCircle = new PositionedObject(Game);
             clearCircle.Radius = Core.ScreenHeight / 2.5f;
 
-            TheUFO.TheUFO.Reset();
+            TheUFOManager.TheUFO.Reset();
 
-            if (TheUFO.TheUFO.Shot.PO.CirclesIntersect(clearCircle))
+            if (TheUFOManager.TheUFO.Shot.PO.CirclesIntersect(clearCircle))
             {
                 return false;
             }
 
-            foreach (Rock rock in TheRocks.Rocks)
+            foreach (Rock rock in TheRockManager.Rocks)
             {
                 if (rock.PO.CirclesIntersect(clearCircle))
                 {

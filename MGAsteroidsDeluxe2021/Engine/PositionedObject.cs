@@ -99,6 +99,7 @@ namespace Panther
                 foreach (PositionedObject po in ParentPOs)
                 {
                     parentPOs += po.Rotation;
+                    parentPOs = WrapAngle(parentPOs);
                 }
 
                 return Rotation + parentPOs;
@@ -415,8 +416,8 @@ namespace Panther
             if (!Enabled || !target.Enabled)
                 return false;
 
-            float distanceX = target.X - X;
-            float distanceY = target.Y - Y;
+            float distanceX = target.WorldPosition.X - WorldPosition.X;
+            float distanceY = target.WorldPosition.Y - WorldPosition.Y;
             float radius = Radius + target.Radius;
 
             if ((distanceX * distanceX) + (distanceY * distanceY) < radius * radius)
@@ -432,6 +433,11 @@ namespace Panther
         public float AngleFromVectorsZ(Vector3 target)
         {
             return MathF.Atan2(target.Y - Y, target.X - X);
+        }
+
+        public bool OffScreen()
+        {
+            return OffScreenSide() || OffScreenTopBottom();
         }
 
         public bool OffScreenSide()

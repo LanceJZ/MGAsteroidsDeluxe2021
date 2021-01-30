@@ -92,6 +92,8 @@ namespace MGAsteroidsDeluxe2021.Entities
                 Core.ScreenWidth);
             GetKeys();
 
+            CheckCollision();
+
             if (shield.Enabled)
             {
                 shieldPower -= 10 * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -107,21 +109,25 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             explodeSound.Play();
             SpawnExplosion();
-            Main.instance.TheUFO.TheUFO.Reset();
+            Main.instance.TheUFOManager.TheUFO.Reset();
             flame.Enabled = false;
             Position = Vector3.Zero;
             Velocity = Vector3.Zero;
             Acceleration = Vector3.Zero;
             Enabled = false;
+            Main.instance.TheWedgeManager.Disperse();
         }
 
-        public void ShieldHit(Vector3 position, Vector3 velocity)
+        public void ShieldHit(Entity entity)
         {
             Acceleration = Vector3.Zero;
             Velocity = (Velocity * 0.1f) * -1;
-            Velocity += velocity * 0.95f;
-            Velocity += Core.VelocityFromAngleZ(Core.AngleFromVectorsZ(position, Position), 3.5f);
+            Velocity += entity.Velocity * 0.95f;
+            Velocity += Core.VelocityFromAngleZ(Core.AngleFromVectorsZ(entity.Position, Position), 3.5f);
             shieldPower -= 20;
+
+            if (shieldPower < 0)
+                shieldPower = 0;
         }
 
         public bool CheckDoneExploding()
@@ -138,6 +144,29 @@ namespace MGAsteroidsDeluxe2021.Entities
         }
         #endregion
         #region Private Methods
+        void CheckCollision()
+        {
+            if (Main.instance.TheUFOManager.TheUFO.Shot.Enabled)
+            {
+                if (CirclesIntersect(Main.instance.TheUFOManager.TheUFO.Shot))
+                {
+                    if (ShieldOn)
+                    {
+                        shieldPower -= 40;
+
+                        if (shieldPower < 0)
+                            shieldPower = 0;
+                    }
+                    else
+                    {
+                        Main.instance.PlayerHit();
+                    }
+
+                    Main.instance.TheUFOManager.TheUFO.Shot.Enabled = false;
+                }
+            }
+        }
+
         void GetKeys()
         {
             float rotationAmound = MathHelper.Pi;

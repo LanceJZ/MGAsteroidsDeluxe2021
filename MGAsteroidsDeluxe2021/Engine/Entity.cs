@@ -28,10 +28,20 @@ namespace Panther
             set => _PO.Position = value;
         }
 
+        public virtual Vector3 WorldPosition
+        {
+            get => _PO.WorldPosition;
+        }
+
         public virtual Vector3 Rotation
         {
             get => _PO.Rotation;
             set => _PO.Rotation = value;
+        }
+
+        public virtual Vector3 WorldRotation
+        {
+            get => _PO.WorldRotation;
         }
         public virtual Vector3 Velocity
         {

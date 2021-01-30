@@ -9,16 +9,19 @@ using System.Linq;
 
 namespace MGAsteroidsDeluxe2021.Entities
 {
-    class WedgePair : Entity
+    public class WedgePair : Entity
     {
         #region Fields
         Wedge[] wedges = new Wedge[2];
         int score = 100;
         bool alone = true;
+        bool newWave = false;
         #endregion
         #region Properties
         public bool Alone { set => alone = value; }
         public Wedge[] TheWedges { get => wedges; }
+        public bool Disperse { get => newWave; set => newWave = value; }
+        public int Score { get => score; }
         #endregion
         #region Constructor
         public WedgePair(Game game, Camera camera) : base(game, camera)
@@ -65,10 +68,17 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Update(gameTime);
 
-            if (alone)
+            if (alone && !newWave)
             {
                 PO.RotationVelocity.Z = wedges[0].RotateToChase(Position, Rotation.Z);
-                Velocity = wedges[0].VelocityToChase(Rotation.Z);
+                Velocity = wedges[0].VelocityToChase(Rotation.Z) * 0.5f;
+            }
+            else if (newWave)
+            {
+                if (PO.OffScreen())
+                {
+                    Enable(false);
+                }
             }
         }
         #endregion
@@ -90,6 +100,8 @@ namespace MGAsteroidsDeluxe2021.Entities
 
         public void Enable(bool enable)
         {
+            Enabled = enable;
+
             foreach (Wedge wedge in wedges)
             {
                 wedge.Enabled = enable;

@@ -9,14 +9,17 @@ using System.Linq;
 
 namespace MGAsteroidsDeluxe2021.Entities
 {
-    class WedgeGroup : Entity
+    public class WedgeGroup : Entity
     {
         #region Fields
         WedgePair[] wedgePairs = new WedgePair[3];
         int score = 50;
+        bool newWave = false;
         #endregion
         #region Properties
         public WedgePair[] TheWedgePairs { get => wedgePairs; }
+        public bool Disperse { get => newWave; set => newWave = value; }
+        public int Score { get => score; }
         #endregion
         #region Constructor
         public WedgeGroup(Game game, Camera camera) : base(game, camera)
@@ -61,6 +64,16 @@ namespace MGAsteroidsDeluxe2021.Entities
         public void BeginRun()
         {
             Velocity = Core.RandomVelocity(3);
+            Y = Core.RandomMinMax(-Core.ScreenHeight, Core.ScreenHeight);
+            X = Core.ScreenWidth;
+
+            foreach(WedgePair wedgePair in wedgePairs)
+            {
+                foreach(Wedge wedge in wedgePair.TheWedges)
+                {
+                    wedge.UpdateMatrix();
+                }
+            }
         }
         #endregion
         #region Update
@@ -68,7 +81,19 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Update(gameTime);
 
-            Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight), Core.ScreenWidth);
+            if (newWave)
+            {
+                if (PO.OffScreen())
+                {
+                    Enable(false);
+                }
+            }
+            else
+            {
+                Position = Core.WrapSideToSide(Core.WrapTopBottom(Position,
+                    Core.ScreenHeight), Core.ScreenWidth);
+            }
+
         }
         #endregion
         #region Public Methods
@@ -89,6 +114,8 @@ namespace MGAsteroidsDeluxe2021.Entities
 
         public void Enable(bool enable)
         {
+            Enabled = enable;
+
             foreach (WedgePair wedgePair in wedgePairs)
             {
                 wedgePair.Enable(enable);

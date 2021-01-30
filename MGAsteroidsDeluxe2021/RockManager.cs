@@ -25,10 +25,13 @@ namespace MGAsteroidsDeluxe2021
         SoundEffect explodeSound;
         Color color = new Color(150, 150, 255);
         int largeRockAmount;
+        int rockCount = 0;
+        bool visable;
         #endregion
         #region Properties
         public List<Rock> Rocks { get => rocksList; }
         public Vector3[] DotVerts { set => dotVerts = value; }
+        public bool Visable { set => visable = value; }
         #endregion
         #region Constructor
         public RockManager(Game game, Camera camera) : base(game)
@@ -70,6 +73,7 @@ namespace MGAsteroidsDeluxe2021
         public void RockDistroyed(Rock rockHit)
         {
             float valume = 1;
+            rockCount = 0;
 
             if (Main.instance.CurrentMode == GameState.InPlay)
             {
@@ -112,6 +116,19 @@ namespace MGAsteroidsDeluxe2021
                     }
                     break;
             }
+
+            foreach (Rock rock in rocksList)
+            {
+                if (rock.Enabled)
+                {
+                    rockCount++;
+                }
+            }
+
+            if (rockCount < 4)
+            {
+                Main.instance.TheWedgeManager.Start();
+            }
         }
 
         public void Reset()
@@ -129,6 +146,7 @@ namespace MGAsteroidsDeluxe2021
         {
             foreach (Rock rock in Rocks)
             {
+                visable = false;
                 rock.Visible = false;
                 rock.explodeFX = false;
                 rock.HideExplode();
@@ -140,6 +158,7 @@ namespace MGAsteroidsDeluxe2021
             foreach (Rock rock in Rocks)
             {
                 rock.Visible = true;
+                visable = true;
                 rock.explodeFX = true;
             }
 
@@ -201,6 +220,11 @@ namespace MGAsteroidsDeluxe2021
             rocksList[rock].size = size;
             rocksList[rock].PO.RotationVelocity.Z = Core.RandomMinMax(-0.666f, 0.666f);
 
+            if (!visable)
+            {
+                rocksList[rock].Visible = false;
+            }
+
             if (!rocksList[rock].explodeFX)
             {
                 rocksList[rock].Visible = false;
@@ -216,6 +240,7 @@ namespace MGAsteroidsDeluxe2021
 
             SpawnRocks(Vector3.Zero, GameLogic.RockSize.Large, largeRockAmount);
             Main.instance.Wave++;
+            Main.instance.TheWedgeManager.Disperse();
         }
 
         #endregion

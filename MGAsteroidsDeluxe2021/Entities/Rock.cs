@@ -73,7 +73,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         void CheckCollusion()
         {
             Player player = Main.instance.ThePlayer;
-            UFO ufo = Main.instance.TheUFO.TheUFO;
+            UFO ufo = Main.instance.TheUFOManager.TheUFO;
 
             foreach (Shot shot in player.Shots)
             {
@@ -85,20 +85,18 @@ namespace MGAsteroidsDeluxe2021.Entities
                 }
             }
 
-            if (!player.ShieldOn)
+
+            if (CirclesIntersect(player))
             {
-                if (PO.CirclesIntersect(player.PO))
+                if (player.ShieldOn)
+                {
+                    player.ShieldHit(this);
+                }
+                else
                 {
                     Explode();
                     PlayerScored();
                     Main.instance.PlayerHit();
-                }
-            }
-            else
-            {
-                if (PO.CirclesIntersect(player.PO))
-                {
-                    player.ShieldHit(Position, Velocity);
                 }
             }
 
@@ -139,7 +137,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             Enabled = false;
             Moveable = false;
-            Main.instance.TheRocks.RockDistroyed(this);
+            Main.instance.TheRockManager.RockDistroyed(this);
 
             if (explodeFX)
             {

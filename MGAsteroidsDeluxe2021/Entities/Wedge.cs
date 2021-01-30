@@ -16,9 +16,12 @@ namespace MGAsteroidsDeluxe2021.Entities
         float rotateMagnitude = MathHelper.PiOver2;
         Color color = new Color(175, 175, 255);
         bool alone = true;
+        bool newWave = false;
         #endregion
         #region Properties
         public bool Alone { set => alone = value; }
+        public bool Disperse { get => newWave; set => newWave = value; }
+        public int Score { get => score; }
         #endregion
         #region Constructor
         public Wedge(Game game, Camera camera) : base(game, camera)
@@ -51,10 +54,17 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Update(gameTime);
 
-            if (alone)
+            if (alone && !newWave)
             {
                 PO.RotationVelocity.Z = RotateToChase(Position, Rotation.Z);
                 Velocity = VelocityToChase(Rotation.Z);
+            }
+            else if (newWave)
+            {
+                if (PO.OffScreen())
+                {
+                    Enabled = false;
+                }
             }
         }
         #endregion
