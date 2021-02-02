@@ -37,9 +37,12 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Initialize();
 
+            Enabled = false;
+
             foreach (Wedge wedge in wedges)
             {
                 wedge.Alone = false;
+                wedge.Enabled = false;
                 wedge.PO.AddAsChildOf(PO, true, false, true, false);
             }
 

@@ -43,6 +43,10 @@ namespace MGAsteroidsDeluxe2021
         SpriteFont hyper16Font;
         SpriteFont hyper8Font;
         SoundEffect bonusSound;
+        SoundEffectInstance backgroundLowSound;
+        SoundEffectInstance backgroundHighSound;
+        Timer backgroundTimer;
+        Timer wavePlayTimer;
         Vector3[] dotVerts;
         Vector2 scorePosition = new Vector2();
         Vector2 highScorePosition = new Vector2();
@@ -70,6 +74,7 @@ namespace MGAsteroidsDeluxe2021
         int highScoreSelectedSpace;
         int newHighScorePosition;
         bool displayHighScoreList = true;
+        bool backgroundPlayedHigh = false;
 
         public GameState CurrentMode { get => _gameMode; set => _gameMode = value; }
         public Player ThePlayer { get => player; }
@@ -112,6 +117,9 @@ namespace MGAsteroidsDeluxe2021
             highScoreListTimer = new Timer(game);
             fileIO = new FileIO();
 
+            backgroundTimer = new Timer(game);
+            wavePlayTimer = new Timer(game);
+
             game.Components.Add(this);
         }
         #region Public Methods
@@ -133,6 +141,9 @@ namespace MGAsteroidsDeluxe2021
             // The X: 27.63705 Y: -20.711943
             Core.ScreenWidth = 27.63705f;
             Core.ScreenHeight = 20.711943f;
+
+            backgroundTimer.Amount = 1;
+            wavePlayTimer.Amount = 120;
         }
 
         public void LoadContent()
@@ -148,6 +159,8 @@ namespace MGAsteroidsDeluxe2021
 
             dotVerts = fileIO.ReadVectorModelFile("Dot");
             bonusSound = Core.LoadSoundEffect("ExtraShip");
+            backgroundHighSound = Core.LoadSoundEffectInstance("BackgroundHigh");
+            backgroundLowSound = Core.LoadSoundEffectInstance("BackgroundLow");
         }
 
         public void BeginRun()
@@ -172,6 +185,8 @@ namespace MGAsteroidsDeluxe2021
             highScoreLettersPosition = new Vector2(Core.WindowWidth / 2.25f, Core.WindowHeight / 1.25f);
             highScorePosition.Y = 10;
             ScoreZero();
+            backgroundHighSound.Volume = 0.15f;
+            backgroundLowSound.Volume = 0.15f;
         }
 
         public void UnloadContent()
@@ -190,8 +205,8 @@ namespace MGAsteroidsDeluxe2021
                 if (CheckPlayerClear() && ThePlayer.CheckDoneExploding())
                 {
                     _gameMode = GameState.InPlay;
-                    ThePlayer.Spawn(Vector3.Zero);
-                    TheUFOManager.TheUFO.Reset(); //WTAF?
+                    ThePlayer.Spawn(Vector3.Zero);                    
+                    TheUFOManager.TheUFO.Reset();
                 }
             }
 
@@ -208,18 +223,17 @@ namespace MGAsteroidsDeluxe2021
                     highScoreListTimer.Reset(15);
                 }
 
-                if (displayHighScoreList || _gameMode == GameState.HighScore)
+                rockManager.MakeVisable(!displayHighScoreList && _gameMode != GameState.HighScore);
+                ufoManager.MakeVisable(!displayHighScoreList && _gameMode != GameState.HighScore);
+                wedgeManager.MakeVisable(!displayHighScoreList && _gameMode != GameState.HighScore);
+            }
+
+            if (_gameMode == GameState.InPlay)
+            {
+                if (backgroundTimer.Elapsed)
                 {
-                    rockManager.Hide(); //TODO: Make like wedgeManager
-                    ufoManager.TheUFO.ResetFireTimer();
-                    ufoManager.Hide(); //TODO: Make like wedgeManager
-                    wedgeManager.MakeVisable(false);
-                }
-                else
-                {
-                    rockManager.UnHide(); //TODO: Make like wedgeManager
-                    ufoManager.UnHide(); //TODO: Make like wedgeManager
-                    wedgeManager.MakeVisable(true);
+                    backgroundTimer.Reset();
+                    PlayBackground();
                 }
             }
         }
@@ -275,6 +289,12 @@ namespace MGAsteroidsDeluxe2021
             }
 
             Core.SpriteBatch.End();
+        }
+
+        public void StartNewWave()
+        {
+            wavePlayTimer.Reset();
+            backgroundTimer.Reset(1);
         }
 
         public void PlayerScore(uint points)
@@ -381,6 +401,31 @@ namespace MGAsteroidsDeluxe2021
         }
         #endregion
         #region Private Methods
+        void PlayBackground()
+        {
+            if(backgroundPlayedHigh)
+            {
+                backgroundPlayedHigh = false;
+                backgroundLowSound.Play();
+            }
+            else
+            {
+                backgroundPlayedHigh = true;
+                backgroundHighSound.Play();
+            }
+
+            if (backgroundTimer.Amount > 0.5f)
+            {
+                backgroundTimer.Amount = backgroundTimer.Amount * 0.995f;
+            }
+
+            if (wavePlayTimer.Seconds * 0.005f < 0.55f)
+            {
+                backgroundHighSound.Pitch = -0.25f + wavePlayTimer.Seconds * 0.005f;
+                backgroundLowSound.Pitch = -0.25f + wavePlayTimer.Seconds * 0.005f;
+            }
+        }
+
         void NewHighScoreEntry()
         {
             if (Core.KeyPressed(Keys.Down))
@@ -485,6 +530,27 @@ namespace MGAsteroidsDeluxe2021
                 {
                     return false;
                 }
+            }
+
+            foreach (Wedge wedge in TheWedgeManager.TheWedge)
+            {
+                if (wedge.PO.CirclesIntersect(clearCircle))
+                {
+                    return false;
+                }
+            }
+
+            foreach (WedgePair wedgePair in TheWedgeManager.TheWedgePair)
+            {
+                if (wedgePair.PO.CirclesIntersect(clearCircle))
+                {
+                    return false;
+                }
+            }
+
+            if (TheWedgeManager.TheWedgeGroup.PO.CirclesIntersect(clearCircle))
+            {
+                return false;
             }
 
             return true;

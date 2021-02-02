@@ -23,8 +23,11 @@ namespace MGAsteroidsDeluxe2021.Entities
         SoundEffect fireSound;
         SoundEffectInstance thrustSound;
         SoundEffect explodeSound;
+        SoundEffectInstance shieldSound;
+        SoundEffect sheieldHitSound;
+        SoundEffect spawnSound;
         Color color = new Color(175, 175, 255);
-        float thrustAmount = 6.66f;
+        float thrustAmount = 16.66f;
         float deceleration = 0.666f;
         float maxVelocity = 42.666f;
         float shieldPower = 100;
@@ -67,6 +70,9 @@ namespace MGAsteroidsDeluxe2021.Entities
             fireSound = Core.LoadSoundEffect("PlayerFire");
             thrustSound = Core.LoadSoundEffectInstance("Thrust2");
             explodeSound = Core.LoadSoundEffect("PlayerExplode");
+            shieldSound = Core.LoadSoundEffectInstance("PlayerShieldOn");
+            sheieldHitSound = Core.LoadSoundEffect("PlayerShieldHit");
+            spawnSound = Core.LoadSoundEffect("PlayerSpawn");
         }
 
         public void BeginRun()
@@ -105,6 +111,12 @@ namespace MGAsteroidsDeluxe2021.Entities
         }
         #endregion
         #region Public Methods
+        public override void Spawn(Vector3 position)
+        {
+            base.Spawn(position);
+            spawnSound.Play();
+        }
+
         public new void Hit()
         {
             explodeSound.Play();
@@ -125,6 +137,7 @@ namespace MGAsteroidsDeluxe2021.Entities
             Velocity += entity.Velocity * 0.95f;
             Velocity += Core.VelocityFromAngleZ(Core.AngleFromVectorsZ(entity.Position, Position), 3.5f);
             shieldPower -= 20;
+            sheieldHitSound.Play();
 
             if (shieldPower < 0)
                 shieldPower = 0;
@@ -263,6 +276,11 @@ namespace MGAsteroidsDeluxe2021.Entities
                 }
 
                 shield.Alpha = 0.01f * shieldPower;
+
+                if (shieldSound.State != SoundState.Playing)
+                {
+                    shieldSound.Play();
+                }
             }
             else
             {
@@ -274,6 +292,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         void TurnShieldOff()
         {
             shield.Enabled = false;
+            shieldSound.Stop();
         }
 
         void Fire()

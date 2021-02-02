@@ -18,7 +18,7 @@ namespace MGAsteroidsDeluxe2021.Entities
         #endregion
         #region Properties
         public WedgePair[] TheWedgePairs { get => wedgePairs; }
-        public bool Disperse { get => newWave; set => newWave = value; }
+        public bool NewWave { get => newWave; set => newWave = value; }
         public int Score { get => score; }
         #endregion
         #region Constructor
@@ -35,10 +35,13 @@ namespace MGAsteroidsDeluxe2021.Entities
         {
             base.Initialize();
 
+            Enabled = false;
+
             foreach(WedgePair wedgePair in wedgePairs)
             {
                 wedgePair.PO.AddAsChildOf(PO);
                 wedgePair.Alone = false;
+                wedgePair.Enabled = false;
             }
 
             float wY = 0.56f;
@@ -86,6 +89,7 @@ namespace MGAsteroidsDeluxe2021.Entities
                 if (PO.OffScreen())
                 {
                     Enable(false);
+                    Main.instance.TheWedgeManager.Started = false;
                 }
             }
             else

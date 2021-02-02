@@ -142,26 +142,20 @@ namespace MGAsteroidsDeluxe2021
             NewWaveSpawn();
         }
 
-        public void Hide()
+        public void MakeVisable(bool visable)
         {
-            foreach (Rock rock in Rocks)
+            if (this.visable != visable)
             {
-                visable = false;
-                rock.Visible = false;
-                rock.explodeFX = false;
-                rock.HideExplode();
-            }
-        }
+                foreach (Rock rock in Rocks)
+                {
+                    this.visable = visable;
+                    rock.Visible = visable;
+                    rock.explodeFX = visable;
 
-        public void UnHide()
-        {
-            foreach (Rock rock in Rocks)
-            {
-                rock.Visible = true;
-                visable = true;
-                rock.explodeFX = true;
+                    if (!visable)
+                        rock.HideExplode();
+                }
             }
-
         }
         #endregion
         #region Private Methods
@@ -241,6 +235,11 @@ namespace MGAsteroidsDeluxe2021
             SpawnRocks(Vector3.Zero, GameLogic.RockSize.Large, largeRockAmount);
             Main.instance.Wave++;
             Main.instance.TheWedgeManager.Disperse();
+            Main.instance.TheWedgeManager.TheWedgeGroup.NewWave = true;
+            Main.instance.TheWedgeManager.TheWedgeGroup.Enable(false);
+            Main.instance.TheWedgeManager.Started = false;
+            Main.instance.TheWedgeManager.Ready = false;
+            Main.instance.StartNewWave();
         }
 
         #endregion

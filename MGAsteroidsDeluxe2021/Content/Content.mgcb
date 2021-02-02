@@ -762,6 +762,18 @@
 /processorParam:Quality=Best
 /build:Sounds/AsteroidsBackground.ogg
 
+#begin Sounds/BackgroundHigh.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/BackgroundHigh.wav
+
+#begin Sounds/BackgroundLow.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/BackgroundLow.wav
+
 #begin Sounds/BonusShip.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -803,6 +815,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/PlayerFire.wav
+
+#begin Sounds/PlayerShieldHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/PlayerShieldHit.wav
+
+#begin Sounds/PlayerShieldOn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/PlayerShieldOn.wav
+
+#begin Sounds/PlayerSpawn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/PlayerSpawn.wav
 
 #begin Sounds/RockExplosion.wav
 /importer:WavImporter
@@ -851,4 +881,16 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/UFOSmall.wav
+
+#begin Sounds/WedgeExplode.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/WedgeExplode.wav
+
+#begin Sounds/WedgeGroupSpawn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/WedgeGroupSpawn.wav
 

@@ -100,6 +100,10 @@ namespace MGAsteroidsDeluxe2021.Entities
                 if (fireTimer.Elapsed)
                 {
                     ResetFireTimer();
+
+                    if (!Visible)
+                        return;
+
                     Fire();
                 }
 
@@ -276,25 +280,44 @@ namespace MGAsteroidsDeluxe2021.Entities
 
         float RandomFire()
         {
-            float angle = 0;
-
             if (Core.RandomMinMax(1, 4) > 1)
             {
-                angle = Core.RandomRadian();
+                return Core.RandomRadian();
             }
             else
             {
-                if (Core.RandomMinMax(1, 4) > 2 && Main.instance.TheWedgeManager.TheWedgeGroup.Enabled)
+                if (Core.RandomMinMax(1, 4) > 2)
                 {
-                    angle = PO.AngleFromVectorsZ(Main.instance.TheWedgeManager.TheWedgeGroup.Position);
+                    if (Main.instance.TheWedgeManager.TheWedgeGroup.Enabled)
+                    {
+                        return PO.AngleFromVectorsZ(Main.instance.TheWedgeManager.TheWedgeGroup.Position);
+                    }
+                    else
+                    {
+                        foreach(WedgePair wedgePair in Main.instance.TheWedgeManager.TheWedgePair)
+                        {
+                            if (wedgePair.Enabled)
+                            {
+                                return PO.AngleFromVectorsZ(wedgePair.Position);
+                            }
+                        }
+
+                        foreach(Wedge wedge in Main.instance.TheWedgeManager.TheWedge)
+                        {
+                            if (wedge.Enabled)
+                            {
+                                return PO.AngleFromVectorsZ(wedge.Position);
+                            }
+                        }
+
+                        return AimedFire();
+                    }
                 }
                 else
                 {
-                    angle = AimedFire();
+                    return AimedFire();
                 }
             }
-
-            return angle;
         }
 
         void PlayerScored()

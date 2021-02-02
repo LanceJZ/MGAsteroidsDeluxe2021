@@ -17,6 +17,8 @@ namespace MGAsteroidsDeluxe2021
         Wedge[] wedges = new Wedge[6];
         WedgePair[] wedgePairs = new WedgePair[3];
         WedgeGroup wedgeGroup;
+        SoundEffect explosionSound;
+        SoundEffect spawnSound;
         bool pairsGone = false;
         bool groupGone = false;
         bool ready = false;
@@ -24,7 +26,10 @@ namespace MGAsteroidsDeluxe2021
         #endregion
         #region Properties
         public WedgeGroup TheWedgeGroup { get => wedgeGroup; }
+        public WedgePair[] TheWedgePair { get => wedgePairs; }
+        public Wedge[] TheWedge { get => wedges; }
         public bool Ready { get => ready; set => ready = value; }
+        public bool Started { set => start = value; }
         #endregion
         #region Constructor
         public WedgeManager(Game game, Camera camera) : base(game)
@@ -51,7 +56,7 @@ namespace MGAsteroidsDeluxe2021
         {
             base.Initialize();
 
-            spawnTimer.Amount = 10;
+            spawnTimer.Amount = 3;
         }
 
         public void LoadContent()
@@ -67,6 +72,8 @@ namespace MGAsteroidsDeluxe2021
             }
 
             wedgeGroup.LoadContent();
+            explosionSound = Core.LoadSoundEffect("WedgeExplode");
+            spawnSound = Core.LoadSoundEffect("WedgeGroupSpawn");
         }
 
         public void BeginRun()
@@ -78,13 +85,9 @@ namespace MGAsteroidsDeluxe2021
         {
             base.Update(gameTime);
 
-            if (ready)
+            if (spawnTimer.Elapsed && ready)
             {
-                if (spawnTimer.Elapsed)
-                {
-                    SpawnGroup();
-                    ready = false;
-                }
+                SpawnGroup();
             }
             else
             {
@@ -97,9 +100,6 @@ namespace MGAsteroidsDeluxe2021
         #region Public Methods
         public void Disperse()
         {
-            wedgeGroup.Disperse = true;
-            start = false;
-
             foreach(WedgePair wedgePair in wedgePairs)
             {
                 wedgePair.Disperse = true;
@@ -115,13 +115,13 @@ namespace MGAsteroidsDeluxe2021
 
         public void Start()
         {
-            if (!start)
+            if (!start && !ready)
             {
                 ready = true;
                 start = true;
                 spawnTimer.Reset();
 
-                wedgeGroup.Disperse = false;
+                wedgeGroup.NewWave = false;
 
                 foreach (WedgePair wedgePair in wedgePairs)
                 {
@@ -153,9 +153,11 @@ namespace MGAsteroidsDeluxe2021
         #region Private Methods
         void SpawnGroup()
         {
+            spawnSound.Play();
             wedgeGroup.BeginRun();
             wedgeGroup.Enable(true);
             ready = false;
+            wedgeGroup.NewWave = false;
         }
 
         void CheckGroupCollision()
@@ -207,6 +209,7 @@ namespace MGAsteroidsDeluxe2021
 
         void GroupHit()
         {
+            explosionSound.Play();
             SpawnPairs();
             wedgeGroup.Enable(false);
             groupGone = true;
@@ -280,6 +283,7 @@ namespace MGAsteroidsDeluxe2021
 
         void WedgePairHit(WedgePair wedgePair)
         {
+            explosionSound.Play();
             SpawnWedges(wedgePair);
             wedgePair.Enable(false);
         }
@@ -354,6 +358,7 @@ namespace MGAsteroidsDeluxe2021
 
         void WedgeHit(Wedge wedge)
         {
+            explosionSound.Play();
             wedge.Enabled = false;
         }
 
@@ -364,7 +369,7 @@ namespace MGAsteroidsDeluxe2021
                 wedgePairs[i].Position = wedgeGroup.TheWedgePairs[i].WorldPosition;
                 wedgePairs[i].Rotation = wedgeGroup.TheWedgePairs[i].WorldRotation;
                 wedgePairs[i].Alone = true;
-                wedgePairs[i].Disperse = false;
+                wedgePairs[i].Disperse = !Main.instance.ThePlayer.Enabled;
                 wedgePairs[i].Enable(true);
 
                 foreach(Wedge wedge in wedgePairs[i].TheWedges)
@@ -386,8 +391,8 @@ namespace MGAsteroidsDeluxe2021
                     wedges[i + 1].Rotation = pair.TheWedges[1].WorldRotation;
                     wedges[i].Alone = true;
                     wedges[i + 1].Alone = true;
-                    wedges[i].Disperse = false;
-                    wedges[i + 1].Disperse = false;
+                    wedges[i].Disperse = !Main.instance.ThePlayer.Enabled;
+                    wedges[i + 1].Disperse = !Main.instance.ThePlayer.Enabled;
                     wedges[i].Enabled = true;
                     wedges[i + 1].Enabled = true;
                     wedges[i].UpdateMatrix();

@@ -79,19 +79,14 @@ namespace MGAsteroidsDeluxe2021
             ResetTimer();
         }
 
-        public void Hide()
+        public void MakeVisable(bool visable)
         {
-            TheUFO.Visible = false;
-            TheUFO.Shot.Visible = false;
-            TheUFO.explodeFX = false;
-            TheUFO.HideExplode();
-        }
+            TheUFO.Visible = visable;
+            TheUFO.Shot.Visible = visable;
+            TheUFO.explodeFX = visable;
 
-        public void UnHide()
-        {
-            TheUFO.Visible = true;
-            TheUFO.Shot.Visible = true;
-            TheUFO.explodeFX = true;
+            if (!visable)
+                TheUFO.HideExplode();
         }
         #endregion
         #region Private Methods
